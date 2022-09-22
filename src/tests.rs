@@ -63,15 +63,15 @@ async fn main() -> anyhow::Result<()> {
 
 async fn test_add_buy_command(user: &Account, contract: &Contract, worker: &Worker<Sandbox>) -> anyhow::Result<()> {
     let deposit = parse_near!("70 N");
-
+    // println!("deposit: {}",deposit);
     user.
         call(&worker, contract.id(), "add_command")
         .args_json(json!({
             "command_id": "command_1",
             "name_product": "Iphone_14",
             "is_sell": false,
-            "amount_product": 2,
-            "price_per_product": parse_near!("30 N"),
+            "amount_product": "2",
+            "price_per_product": "30000000000000000000000000",
             "quality": null,
         }))?
         .deposit(deposit)
@@ -91,7 +91,7 @@ async fn test_add_buy_command(user: &Account, contract: &Contract, worker: &Work
     assert_eq!(res_command.name_product.to_string(), "Iphone_14", "WRONG_NAME_PRODUCT");
     assert_eq!(res_command.is_sell, false, "WRONG_IS_SELL");
     assert_eq!(res_command.amount_product, 2, "WRONG_AMOUNT_PRODUCT");
-    assert_eq!(res_command.price_per_product, parse_near!("30 N"), "WRONG_PRICE_PER_PRODUCT");
+    assert_eq!(res_command.price_per_product, 30000000000000000000000000, "WRONG_PRICE_PER_PRODUCT");
 
     println!("      Passed ✅  get_command");
 
