@@ -80,6 +80,20 @@ async fn test_add_buy_command(user: &Account, contract: &Contract, worker: &Work
 
     println!("      Passed ✅  add_buy_command");
 
+    user.
+        call(&worker, contract.id(), "add_command")
+        .args_json(json!({
+            "command_id": "command_2",
+            "name_product": "Iphone_14",
+            "is_sell": false,
+            "amount_product": "1",
+            "price_per_product": "31000000000000000000000000",
+            "quality": null,
+        }))?
+        .deposit(deposit)
+        .transact()
+        .await?;
+
     let res_command: CommandDetail = user.call(&worker, contract.id(), "get_command")
                                         .args_json(json!({
                                             "command_id": "command_1"
@@ -88,12 +102,32 @@ async fn test_add_buy_command(user: &Account, contract: &Contract, worker: &Work
                                         .await?
                                         .json()?;
 
-    assert_eq!(res_command.name_product.to_string(), "Iphone_14", "WRONG_NAME_PRODUCT");
-    assert_eq!(res_command.is_sell, false, "WRONG_IS_SELL");
-    assert_eq!(res_command.amount_product, 2, "WRONG_AMOUNT_PRODUCT");
-    assert_eq!(res_command.price_per_product, 30000000000000000000000000, "WRONG_PRICE_PER_PRODUCT");
+    assert_eq!(res_command.command_id, "command_1", "WRONG_COMMAND_ID_1");
+    assert_eq!(res_command.name_product.to_string(), "Iphone_14", "WRONG_NAME_PRODUCT_1");
+    assert_eq!(res_command.is_sell, false, "WRONG_IS_SELL_1");
+    assert_eq!(res_command.amount_product, 2, "WRONG_AMOUNT_PRODUCT_1");
+    assert_eq!(res_command.price_per_product, 30000000000000000000000000, "WRONG_PRICE_PER_PRODUCT_1");
 
     println!("      Passed ✅  get_command");
+
+    let res_vec: Vec<CommandDetail> = user.call(&worker, contract.id(), "get_product_order_way")
+                    .args_json(json!({
+                        "name_product": "Iphone_14",
+                        "is_sell": false,
+                    }))?
+                    .transact()
+                    .await?
+                    .json()?;
+
+    assert_eq!(res_vec.get(0).unwrap().command_id, "command_2", "WRONG_COMMAND_ID_2");
+    assert_eq!(res_vec.get(0).unwrap().amount_product, 1, "WRONG_AMOUNT_PRODUCT_2");
+    assert_eq!(res_vec.get(0).unwrap().price_per_product, 31000000000000000000000000, "WRONG_PRICE_PER_PRODUCT_2");
+
+    assert_eq!(res_vec.get(1).unwrap().command_id, "command_1", "WRONG_COMMAND_ID_3");
+    assert_eq!(res_vec.get(1).unwrap().amount_product, 2, "WRONG_AMOUNT_PRODUCT_3");
+    assert_eq!(res_vec.get(1).unwrap().price_per_product, 30000000000000000000000000, "WRONG_PRICE_PER_PRODUCT_3");
+    
+    println!("      Passed ✅  get_product_order_way");
 
     Ok(())
 }
