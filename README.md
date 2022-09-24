@@ -1,5 +1,6 @@
 # Blockchain_in_Manufacturing_Integration_Tests
-_This project is subproject of Blockchain_in_Manufacturing
+_ This project is subproject of Blockchain_in_Manufacturing
+
 _ Link to Blockchain_in_Manufacturing: https://github.com/LTBach/Blockchain_in_Manufacturing
 # How to interact with code:
 1. Clone repo
